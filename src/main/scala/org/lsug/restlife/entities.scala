@@ -1,22 +1,23 @@
 package org.lsug.restlife
 
 case class Cell(x: Int, y: Int)  {
-  def isNeighbour(that: Cell): Boolean = ???
-  def neighbourCoordinates: Set[(Int, Int)] = Cell.neighbourOffsets.map {
+  def isNeighbour(that: Cell): Boolean =
+    neighbourCoordinates.contains((that.x, that.y))
+  val neighbourCoordinates: Set[(Int, Int)] = Cell.neighbourOffsets.map {
     case (ofX, ofY) => (x + ofX, y + ofY)
   }
 }
 object Cell {
   val neighbourOffsets = Set((0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1))
 }
-case class Board(cells: Array[Cell]) {
+case class Board(cells: Set[Cell]) {
 
 
   def cell(x: Int, y: Int): Option[Cell] = cells.find(c => c.x == x && c.y == y)
 
 
   def isWithinLimits(c: Cell): Boolean = ???
-  def neighbours(c: Cell): Set[Cell] = ???
+  def neighbours(c: Cell): Set[Cell] = cells.filter(other => c.isNeighbour(other))
   def nextGeneration: Board = ???
 //  Any live cell with fewer than two live neighbours dies, as if caused by under-population.
 //  Any live cell with two or three live neighbours lives on to the next generation.

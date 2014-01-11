@@ -8,8 +8,8 @@ trait BoardData {
   val c45 = Cell(4, 5)
   val c56 = Cell(5, 6)
 
-  val b1 = Board(Array(c23, c45, c56))
-  val emptyBoard = Board(Array.empty[Cell])
+  val b1 = Board(Set(c23, c45, c56))
+  val emptyBoard = Board(Set.empty[Cell])
 }
 
 class BoardTest extends Specification {
@@ -35,6 +35,10 @@ class BoardTest extends Specification {
       "correctly detect two cells are neighbours or not" in {
         Cell(2,3).isNeighbour(c45) should beFalse
         Cell(4,5).isNeighbour(c56) should beTrue
+      }
+      "produce a list of neighbours of a cell" in {
+        b1.neighbours(c23) should beEmpty
+        b1.neighbours(c45) should equalTo(Set(c56))
       }
       
     }
