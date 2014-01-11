@@ -20,15 +20,26 @@ class Router extends HttpServiceActor {
   import BoardJsonProtocol._
 
   @tailrec
-  private def runBoard(board: Board, steps: Int): Board =
-    if (steps == 0) board
-    else runBoard(board.nextGeneration, steps - 1)
+  private def runBoard(board: Board, steps: Int, states: List[Board] = Nil): List[Board] =
+    if (steps == 0) states
+    else runBoard(board.nextGeneration, steps - 1, board :: states)
 
   def receive: Actor.Receive = runRoute {
-    post {
-      entity(as[BoardRequest]) { case BoardRequest(board, steps) =>
-        complete {
-          runBoard(board, steps)
+    println("RUNROUTE")
+    pathSingleSlash {
+      get { complete { "OK" } } ~
+      post {
+        println("POST")
+        entity(as[BoardRequest]) {
+          case BoardRequest(board, steps) =>
+            println("ENTITY")
+            complete {
+              println("COMPLETE")
+              runBoard(board, steps)
+            }
+          case _ =>
+            println("OOPS")
+            complete("MISSED")
         }
       }
     }

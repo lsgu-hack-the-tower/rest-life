@@ -3,7 +3,7 @@ package org.lsug.restlife
 case class Cell(x: Int, y: Int)  {
   def isNeighbour(that: Cell): Boolean =
     neighbourCoordinates.contains((that.x, that.y))
-  val neighbourCoordinates: Set[(Int, Int)] = Cell.neighbourOffsets.map {
+  def neighbourCoordinates: Set[(Int, Int)] = Cell.neighbourOffsets.map {
     case (ofX, ofY) => (x + ofX, y + ofY)
   }
 }
