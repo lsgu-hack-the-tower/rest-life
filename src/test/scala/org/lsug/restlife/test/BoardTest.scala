@@ -10,6 +10,8 @@ trait BoardData {
 
   val b1 = Board(Set(c23, c45, c56))
   val emptyBoard = Board(Set.empty[Cell])
+
+
 }
 
 class BoardTest extends Specification {
@@ -40,7 +42,15 @@ class BoardTest extends Specification {
         b1.neighbours(c23) should beEmpty
         b1.neighbours(c45) should equalTo(Set(c56))
       }
-      
+      "create new cells at positions with 3 alive neighbours" in {
+        val expectedNewCell = Cell(0,1)
+        val lifeGivingBoard = Board(Set(
+          Cell(0,0), Cell(1,1), Cell(1,0)
+        ))
+        val newCells =lifeGivingBoard.spawnCells
+        newCells.size should equalTo(1)
+        newCells should equalTo(Set(expectedNewCell))
+      }
     }
   }
 }

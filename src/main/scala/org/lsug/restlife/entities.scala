@@ -18,6 +18,13 @@ case class Board(cells: Set[Cell]) {
 
   def isWithinLimits(c: Cell): Boolean = ???
   def neighbours(c: Cell): Set[Cell] = cells.filter(other => c.isNeighbour(other))
+  def spawnCells:Set[Cell] = {
+    cells.flatMap(c => c.neighbourCoordinates).filter { case (x, y) =>
+      cell(x, y).isEmpty && neighbours(Cell(x, y)).size == 3
+    } map {
+      case (x,y) => Cell(x,y)
+    }
+  }
   def nextGeneration: Board = ???
 //  Any live cell with fewer than two live neighbours dies, as if caused by under-population.
 //  Any live cell with two or three live neighbours lives on to the next generation.
