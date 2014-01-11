@@ -1,14 +1,20 @@
 package org.lsug.restlife
 
-case class Cell(x: Int, y: Int)
-case class Board(cells: Array[Cell]) {
-  val neighbourOffsets = Set((0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1))
-
-  def cell(x: Int, y: Int): Option[Cell] = cells.find(c => c.x == x && c.y == y)
-  def neighbourCoordinates(x: Int, y: Int): Set[(Int, Int)] = neighbourOffsets.map {
+case class Cell(x: Int, y: Int)  {
+  def isNeighbour(that: Cell): Boolean = ???
+  def neighbourCoordinates: Set[(Int, Int)] = Cell.neighbourOffsets.map {
     case (ofX, ofY) => (x + ofX, y + ofY)
   }
-  def isNeighbour(c1: Cell, c2: Cell): Boolean = ???
+}
+object Cell {
+  val neighbourOffsets = Set((0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1))
+}
+case class Board(cells: Array[Cell]) {
+
+
+  def cell(x: Int, y: Int): Option[Cell] = cells.find(c => c.x == x && c.y == y)
+
+
   def isWithinLimits(c: Cell): Boolean = ???
   def neighbours(c: Cell): Set[Cell] = ???
   def nextGeneration: Board = ???
