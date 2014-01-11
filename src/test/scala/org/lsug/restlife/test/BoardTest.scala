@@ -64,6 +64,19 @@ class BoardTest extends Specification {
         board2.cell(0,0) should beNone
         board2.cell(0,1) should beNone
       }
+
+      "cell with two neighbours should survive" in {
+        val c00 = Cell(0, 0)
+        val c01 = Cell(0, 1)
+        val c02 = Cell(0, 2)
+
+        val b3 = Board(Set(c00, c01, c02))
+        val board3  = b3.nextGeneration
+
+        board3.cell(0,0) should beNone
+        board3.cell(0,1) should equalTo(Some(c01))
+        board3.cell(0,2) should beNone
+      }
     }
   }
 }

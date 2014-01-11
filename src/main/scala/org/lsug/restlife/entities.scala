@@ -25,9 +25,12 @@ case class Board(cells: Set[Cell]) {
       case (x,y) => Cell(x,y)
     }
   }
-  def nextGeneration: Board = Board(Set.empty[Cell])
-//  Any live cell with fewer than two live neighbours dies, as if caused by under-population.
-//  Any live cell with two or three live neighbours lives on to the next generation.
-//  Any live cell with more than three live neighbours dies, as if by overcrowding.
-//  Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+  def nextGeneration: Board = {
+    val afterDeath = cells.filter { c =>
+      val n = neighbours(c)
+      n.size > 1 && n.size < 4
+    }
+
+    Board(afterDeath ++ spawnCells)
+  }
 }
