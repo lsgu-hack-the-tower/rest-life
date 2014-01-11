@@ -1,19 +1,20 @@
 # RESTful API
 
 The restful API will accept a simulation request with the following format:
+```
     {
         "board": {
             "cells": [ { "x": 2, "y": 2 }, { "x": 3, "y": 2 }, { "x": 2, "y": 3 } ]
         },
         "steps": 10
     }
-
+```
     And will respond with the following:
-
+```
     {
       "statuses": [ [ @board1, @board2, ... ]  ]
     }
-
+```
 # Rules of the game of life
 
 Any live cell with fewer than two live neighbours dies, as if caused by under-population.
