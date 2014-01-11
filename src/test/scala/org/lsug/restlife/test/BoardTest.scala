@@ -40,6 +40,15 @@ class BoardTest extends Specification {
         b1.neighbours(c23) should beEmpty
         b1.neighbours(c45) should equalTo(Set(c56))
       }
+      "kill cells that have no neighbours" in  {
+        val board =  b1.nextGeneration
+        board.cell(2,3) should beNone
+      }
+
+      "kill cells that only have one neighbour" in {
+        val board  = b1.nextGeneration
+
+      }
       
     }
   }
