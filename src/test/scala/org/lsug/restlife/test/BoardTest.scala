@@ -46,10 +46,15 @@ class BoardTest extends Specification {
       }
 
       "kill cells that only have one neighbour" in {
-        val board  = b1.nextGeneration
+        val c00 = Cell(0, 0)
+        val c01 = Cell(0, 1)
 
+        val b2 = Board(Set(c00, c01))
+        val board2  = b2.nextGeneration
+
+        board2.cell(0,0) should beNone
+        board2.cell(0,1) should beNone
       }
-      
     }
   }
 }
