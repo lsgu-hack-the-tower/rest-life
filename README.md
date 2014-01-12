@@ -1,6 +1,7 @@
 # RESTful API
 
 The restful API will accept a simulation request with the following format:
+
     {
         "board": {
             "cells": [
