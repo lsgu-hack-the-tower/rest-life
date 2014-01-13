@@ -7,6 +7,8 @@ import spray.httpx.SprayJsonSupport._
 import scala.annotation.tailrec
 import akka.io.IO
 import spray.can.Http
+import org.slf4j.LoggerFactory
+import java.util.Date
 
 case class BoardRequest(board: Board, steps: Int)
 
@@ -18,6 +20,8 @@ object BoardJsonProtocol extends DefaultJsonProtocol {
 
 class Router extends HttpServiceActor {
   import BoardJsonProtocol._
+  
+ def logger = LoggerFactory.getLogger(this.getClass()) 
 
   @tailrec
   private def runBoard(board: Board, steps: Int, states: List[Board] = Nil): List[Board] =
@@ -25,20 +29,20 @@ class Router extends HttpServiceActor {
     else runBoard(board.nextGeneration, steps - 1, board :: states)
 
   def receive: Actor.Receive = runRoute {
-    println("RUNROUTE")
+    logger.info("RUNROUTE")
     pathSingleSlash {
-      get { complete { "OK" } } ~
+      get { complete { new Date().toString() } } ~
       post {
-        println("POST")
+        logger.info("POST")
         entity(as[BoardRequest]) {
           case BoardRequest(board, steps) =>
-            println("ENTITY")
+            logger.info("ENTITY")
             complete {
-              println("COMPLETE")
+              logger.info("COMPLETE")
               runBoard(board, steps)
             }
           case _ =>
-            println("OOPS")
+            logger.info("No BoardRequest in request")
             complete("MISSED")
         }
       }
@@ -48,10 +52,13 @@ class Router extends HttpServiceActor {
 
 object Main {
   def main(args: Array[String]) {
+    
+    def logger = LoggerFactory.getLogger(this.getClass())
     implicit lazy val system = ActorSystem("game-of-life-system")
 
     val router = system.actorOf(Props[Router], "router")
 
+    logger.info("Started server on localhost:9909 for %s".format("game-of-life-system"))
     IO(Http) ! Http.Bind(router, interface = "localhost", port = 9909)
 
     system.awaitTermination()

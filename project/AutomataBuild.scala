@@ -11,9 +11,9 @@ object WorkmapBuild extends Build {
   lazy val specs2 = "org.specs2" %% "specs2" % "2.2.3" % "test"
 
   // Logging
-  lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % "1.0.12"
-  lazy val logbackCore = "ch.qos.logback" % "logback-core" % "1.0.12"
-  lazy val slf4jApi = "org.slf4j" % "slf4j-api" % "1.6.4"
+  lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % "1.0.13"
+  lazy val logbackCore = "ch.qos.logback" % "logback-core" % "1.0.13"
+  lazy val slf4jApi = "org.slf4j" % "slf4j-api" % "1.7.5"
 
   // Spray
   lazy val sprayCan = "io.spray" % "spray-can" % "1.2.0"
