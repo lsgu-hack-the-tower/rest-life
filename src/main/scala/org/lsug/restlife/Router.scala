@@ -1,53 +1,41 @@
 package org.lsug.restlife
 
 import spray.json._
-import spray.routing.HttpServiceActor
+import spray.routing.{Directives, HttpServiceActor}
 import akka.actor.{Props, ActorSystem, Actor}
-import spray.httpx.SprayJsonSupport._
 import scala.annotation.tailrec
 import akka.io.IO
 import spray.can.Http
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 import java.util.Date
 
-case class BoardRequest(board: Board, steps: Int)
+case class BoardRequest(board: LifeSym.Board, steps: Int)
 
 object BoardJsonProtocol extends DefaultJsonProtocol {
-  implicit val cellFormat = jsonFormat2(Cell.apply _)
-  implicit val boardFormat = jsonFormat1(Board)
   implicit val boardRequestFormat = jsonFormat2(BoardRequest)
 }
 
-class Router extends HttpServiceActor {
+trait Routes extends Directives {
   import BoardJsonProtocol._
-  
- def logger = LoggerFactory.getLogger(this.getClass()) 
+  import spray.httpx.SprayJsonSupport._
 
-  @tailrec
-  private def runBoard(board: Board, steps: Int, states: List[Board] = Nil): List[Board] =
-    if (steps == 0) states
-    else runBoard(board.nextGeneration, steps - 1, board :: states)
+  def logger: Logger
 
-  def receive: Actor.Receive = runRoute {
-    logger.info("RUNROUTE")
-    pathSingleSlash {
-      get { complete { new Date().toString() } } ~
-      post {
-        logger.info("POST")
-        entity(as[BoardRequest]) {
-          case BoardRequest(board, steps) =>
-            logger.info("ENTITY")
-            complete {
-              logger.info("COMPLETE")
-              runBoard(board, steps)
-            }
-          case _ =>
-            logger.info("No BoardRequest in request")
-            complete("MISSED")
+  def route = pathSingleSlash {
+    post {
+      entity(as[BoardRequest]) {
+        case req @ BoardRequest(board, steps) => complete {
+          logger.info(s"Serving request: $req")
+          LifeSym.sym(board, steps)
         }
       }
     }
   }
+}
+
+class Router extends HttpServiceActor with Routes {
+  val logger = LoggerFactory.getLogger(this.getClass())
+  def receive: Actor.Receive = runRoute(route)
 }
 
 object Main {
