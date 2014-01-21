@@ -65,6 +65,17 @@ class BoardTest extends Specification {
         board3 should contain((0,1))
         board3 should not contain((0,2))
       }
+      "correctly evolve a 3 vertical pattern" in {
+        val b = board(cell(3, 2), cell(3, 3), cell(3, 4))
+        val bs = sym(b, 4)
+
+        bs should equalTo {
+          board(cell(2, 3), cell(3, 3), cell(4, 3)) ::
+          board(cell(3, 2), cell(3, 3), cell(3, 4)) ::
+          board(cell(2, 3), cell(3, 3), cell(4, 3)) ::
+          board(cell(3, 2), cell(3, 3), cell(3, 4)) :: Nil
+        }
+      }
     }
   }
 }

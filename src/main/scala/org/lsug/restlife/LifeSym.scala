@@ -42,4 +42,3 @@ object LifeSym {
     runBoard(b, steps)
   }
 }
-

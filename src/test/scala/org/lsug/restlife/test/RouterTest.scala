@@ -5,9 +5,12 @@ import spray.testkit.Specs2RouteTest
 import org.lsug.restlife.{BoardJsonProtocol, BoardRequest, Routes, Router}
 import spray.http.StatusCodes
 import org.lsug.restlife.LifeSym._
+import org.slf4j.LoggerFactory
 
 class RouterTest extends Specification with Specs2RouteTest {
-  val r = new Routes {}
+  val r = new Routes {
+    def logger = LoggerFactory.getLogger(getClass)
+  }
   import BoardJsonProtocol._
   import spray.httpx.SprayJsonSupport._
 
