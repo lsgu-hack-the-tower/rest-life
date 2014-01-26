@@ -16,6 +16,7 @@ module.exports = function (grunt) {
   require('time-grunt')(grunt);
 
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-connect-proxy');
 
   // Define the configuration for all the tasks
   grunt.initConfig({
@@ -24,7 +25,7 @@ module.exports = function (grunt) {
     yeoman: {
       // configurable paths
       app: require('./bower.json').appPath || 'app',
-      dist: 'dist'
+      dist: '../main/resources/ui'
     },
 
     // Watches files for changes and runs tasks based on the changed files
@@ -77,7 +78,26 @@ module.exports = function (grunt) {
           base: [
             '.tmp',
             '<%= yeoman.app %>'
-          ]
+          ],
+          middleware: function (connect, options) {
+            if (!Array.isArray(options.base)) {
+              options.base = [options.base];
+            }
+
+            // Setup the proxy
+            var middlewares = [require('grunt-connect-proxy/lib/utils').proxyRequest];
+
+            // Serve static files.
+            options.base.forEach(function(base) {
+              middlewares.push(connect.static(base));
+            });
+
+            // Make directory browse-able.
+            var directory = options.directory || options.base[options.base.length - 1];
+            middlewares.push(connect.directory(directory));
+
+            return middlewares;
+          }
         }
       },
       test: {
@@ -94,7 +114,17 @@ module.exports = function (grunt) {
         options: {
           base: '<%= yeoman.dist %>'
         }
-      }
+      },
+      proxies: [
+        {
+          context: '/board',
+          host: '127.0.0.1',
+          port: 9909,
+          https: false,
+          changeOrigin: false,
+          xforward: false
+        }
+      ]
     },
 
     less: {
@@ -365,6 +395,7 @@ module.exports = function (grunt) {
       'less',
       'concurrent:server',
       'autoprefixer',
+      'configureProxies:server',
       'connect:livereload',
       'watch'
     ]);

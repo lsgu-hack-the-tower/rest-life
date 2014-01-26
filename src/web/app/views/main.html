@@ -1,7 +1,7 @@
 <div id="wrapper">
   <div class="row">
     <h1>Conway's game of life</h1>
-    <form role="form" class="form-inline">
+    <!-- <form role="form" class="form-inline">
       <div class="well clearfix">
         <div class="col-md-10">
           <div class="form-group">
@@ -18,20 +18,22 @@
             Start
           </button>
           <button type="text" class="btn btn-cancel" id="toggle" ng-click="sym.reset">
-            Reset
+            Reset Foo!
           </button>
         </div>
       </div>
-    </form>
+    </form> -->
   </div>
   <svg>
-    <!-- <rect rx="2" ry="2" x="0" y="0" width="100%" height="100%" class="maingrid">
-    </rect> -->
-    <rect rx="5" ry="5" x="0" y="0" width="2%" height="3%" class="cell">
-    </rect>
-    <rect rx="5" ry="5" x="2%" y="3%" width="2%" height="3%" class="cell cell-live">
-    </rect>
-    <rect rx="5" ry="5" x="2%" y="0" width="2%" height="3%" class="cell">
+    <rect rx="5" ry="5" ng-repeat="cell in board.cells" ng-click="toggle(cell)"
+          ng-class="board.class(cell)"
+          ng-attr-x="{{ cell.posX }}"
+          ng-attr-y="{{ cell.posY }}"
+          ng-attr-width="{{ cell.l }}"
+          ng-attr-height="{{ cell.l }}">
     </rect>
   </svg>
+  <button type="text" class="btn btn-default" id="toggle" ng-click="startSym()">
+    Start
+  </button>
 </div>

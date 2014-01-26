@@ -6,17 +6,19 @@ import org.lsug.restlife.{BoardJsonProtocol, BoardRequest, Routes, Router}
 import spray.http.StatusCodes
 import org.lsug.restlife.LifeSym._
 import org.slf4j.LoggerFactory
+import akka.actor.ActorSystem
 
 class RouterTest extends Specification with Specs2RouteTest {
   val r = new Routes {
     def logger = LoggerFactory.getLogger(getClass)
+    val actorRefFactory = ActorSystem("lsug-automata-test")
   }
   import BoardJsonProtocol._
   import spray.httpx.SprayJsonSupport._
 
   "The service" should {
     "produce an empty evolution for an empty board" in {
-      Post("/", BoardRequest(board(), 3)) ~> r.route ~> check {
+      Post("/board", BoardRequest(board(), 3)) ~> r.route ~> check {
         handled must beTrue
         status must beEqualTo(StatusCodes.OK)
         responseAs[List[Board]] should beEqualTo(board() :: board() :: board() :: Nil)
@@ -27,7 +29,7 @@ class RouterTest extends Specification with Specs2RouteTest {
       val b = board(cell(0, 0), cell(0, 1), cell(1, 1), cell(4, 5))
       val b1 = board(cell(0, 0), cell(0, 1), cell(1, 1), cell(1, 0))
       val req = BoardRequest(b, 2)
-      Post("/", req) ~> r.route ~> check {
+      Post("/board", req) ~> r.route ~> check {
         handled must beTrue
         status must beEqualTo(StatusCodes.OK)
         responseAs[List[Board]] should beEqualTo(b1 :: b :: Nil)

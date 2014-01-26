@@ -1,8 +1,8 @@
 package org.lsug.restlife
 
 import spray.json._
-import spray.routing.{Directives, HttpServiceActor}
-import akka.actor.{Props, ActorSystem, Actor}
+import spray.routing.{RoutingSettings, Directives, HttpServiceActor}
+import akka.actor.{ActorRefFactory, Props, ActorSystem, Actor}
 import scala.annotation.tailrec
 import akka.io.IO
 import spray.can.Http
@@ -18,19 +18,26 @@ object BoardJsonProtocol extends DefaultJsonProtocol {
 trait Routes extends Directives {
   import BoardJsonProtocol._
   import spray.httpx.SprayJsonSupport._
-
   def logger: Logger
+  implicit def actorRefFactory: ActorRefFactory
 
-  def route = pathSingleSlash {
-    post {
-      entity(as[BoardRequest]) {
-        case req @ BoardRequest(board, steps) => complete {
-          logger.info(s"Serving request: $req")
-          LifeSym.sym(board, steps)
+  def route(implicit rs: RoutingSettings) =
+    path("board") {
+      post {
+        entity(as[BoardRequest]) {
+          case req @ BoardRequest(board, steps) => complete {
+            logger.info(s"Serving request: $req")
+            LifeSym.sym(board, steps)
+          }
         }
       }
+    } ~
+    pathPrefix("web") {
+      get {
+//        complete { "OK" }
+        getFromResourceDirectory("ui")
+      }
     }
-  }
 }
 
 class Router extends HttpServiceActor with Routes {
